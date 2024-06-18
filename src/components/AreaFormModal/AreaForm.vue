@@ -9,19 +9,28 @@
       @finish="onFinish"
       @finishFailed="onFinishFailed"
     >
+      <a-form-item v-if="area" label="Delete Area">
+        <a-button
+          danger
+          size="small"
+          type="default"
+          :icon="h(DeleteOutlined)"
+          @click="deleteAreaHandler"
+        />
+      </a-form-item>
       <a-form-item
         label="Area Name"
-        name="areaName"
+        name="name"
         :rules="[{ required: true, message: 'Please input your area name!' }]"
       >
-        <a-input v-model:value="formState.areaName" />
+        <a-input v-model:value="formState.name" />
       </a-form-item>
 
-      <a-form-item label="Description" name="desc">
-        <a-textarea v-model:value="formState.desc" />
+      <a-form-item label="Description" name="description">
+        <a-textarea v-model:value="formState.description" />
       </a-form-item>
 
-      <a-form-item label="Upload Cover" name="cover">
+      <a-form-item label="Upload Cover" name="imageUrl">
         <a-upload
           action="paste image url save here"
           list-type="picture-card"
@@ -34,10 +43,11 @@
           </div>
         </a-upload>
       </a-form-item>
-
-      <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-        <a-button type="primary" html-type="submit">Submit</a-button>
-      </a-form-item>
+      <a-flex align="center" justify="end">
+        <a-form-item>
+          <a-button type="primary" html-type="submit">Submit</a-button>
+        </a-form-item>
+      </a-flex>
     </a-form>
 
     <a-modal
@@ -51,34 +61,49 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
-import { PlusOutlined } from "@ant-design/icons-vue";
+import { h, reactive, ref } from "vue";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons-vue";
 import { message, type UploadProps } from "ant-design-vue";
-import type { FormState } from "./new-area-from.types.ts";
+import { useCreateArea, useDeleteArea } from "@/composables";
+import type { Area } from "@/models";
 
-interface Emits {
-  (event: "submit", values: FormState): void;
+interface Props {
+  area?: Area;
 }
 
-const emit = defineEmits<Emits>();
+type FormState = Omit<Area, "areaId">;
+
+const props = defineProps<Props>();
+
+const { create, error: createError } = useCreateArea();
+const { deleteArea, error: deleteError } = useDeleteArea();
 
 const formState = reactive<FormState>({
-  areaName: "",
-  desc: "",
-  cover: "",
+  name: props.area?.name || "",
+  description: props.area?.description || "",
+  imageUrl: props.area?.imageUrl || "",
 });
 
 const coverPreviewVisible = ref(false);
 const coverPreviewImage = ref<string>("");
 const coverPreviewTitle = ref<string>("");
 
-const onFinish = (values: FormState): void => {
-  message.success("Area created successfully!");
-  emit("submit", values);
+const onFinish = async (values: FormState): Promise<void> => {
+  await create(values.name, values.description, values.imageUrl);
+
+  if (createError.value) message.error(createError.value as string);
+  else message.success("AreaCard created successfully!");
 };
 
 const onFinishFailed = (errorInfo: any) => {
-  console.log("Failed:", errorInfo);
+  message.error("Failed:", errorInfo);
+};
+
+const deleteAreaHandler = (): void => {
+  if (props.area?.areaId) deleteArea(props.area?.areaId);
+
+  if (deleteError.value) message.error(deleteError.value as string);
+  else message.success("AreaCard deleted successfully!");
 };
 
 //Upload Cover

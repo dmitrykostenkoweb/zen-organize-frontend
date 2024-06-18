@@ -1,5 +1,4 @@
-import Area from "./Area";
-import ImgUpload from "./ImgUpload";
+import AreaCard from "./AreaCard";
 import EditButton from "./EditButton";
 
-export { Area, ImgUpload, EditButton };
+export { AreaCard, EditButton };

@@ -16,14 +16,15 @@
     >
 
     <template #actions>
-      <a-button
-        size="large"
-        type="text"
-        @click="emit('add')"
-        :icon="h(FileAddFilled)"
-        block
-        >Add</a-button
-      >
+      <a-tooltip title="Add">
+        <a-button
+          size="large"
+          type="default"
+          shape="circle"
+          @click="emit('add')"
+          :icon="h(FileAddFilled)"
+        />
+      </a-tooltip>
     </template>
   </Card>
 </template>

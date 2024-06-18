@@ -2,7 +2,6 @@
   <Card
     :loading="false"
     :title="title"
-    :extra="EditButton"
     style="width: 300px"
     hoverable
     :description="description"
@@ -12,24 +11,29 @@
         <img alt="no-image" :src="noImage" />
       </div>
     </template>
-    <p class="area-description">{{ description }}</p>
+    <p v-if="description" class="area-description">{{ description }}</p>
     <template #actions>
-      <EditButton />
+      <EditButton @click="emit('edit')" />
     </template>
   </Card>
 </template>
 
 <script setup lang="ts">
-import { EditButton } from "@/components/Base";
 import noImage from "@/assets/img/no-image.png";
+import { EditButton } from "@/components/Base";
 import { Card } from "ant-design-vue";
 
 interface Props {
   title: string;
-  description: string;
+  description?: string;
+}
+
+interface Emits {
+  (e: "edit"): void;
 }
 
 defineProps<Props>();
+const emit = defineEmits<Emits>();
 </script>
 
 <style scoped lang="scss">
