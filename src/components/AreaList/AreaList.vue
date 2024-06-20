@@ -3,14 +3,18 @@
     <AreaCard
       class="grid-item"
       v-for="area in areas"
-      :key="area.areaId"
+      :key="area.areaid"
       :title="area.name"
       :description="area.description"
-      @edit="editArea(area)"
+      @update="updateArea(area)"
     />
-    <AddAreaCard @add="addArea" />
+    <AddAreaCard @create="createArea" />
   </div>
-  <AreaFormModal v-model="isAddAreaModalOpen" :area="updatedArea" />
+  <AreaFormModal
+    v-model="isAddAreaModalOpen"
+    :area="updatedArea"
+    :mode="areaFormMode"
+  />
 </template>
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
@@ -21,22 +25,26 @@ import { useGetAllAreas } from "@/composables";
 import type { Area } from "@/models";
 
 const isAddAreaModalOpen = ref<boolean>(false);
-const updatedArea = ref<Area | undefined>(undefined);
+const updatedArea = ref<Area | null>(null);
+const areaFormMode = ref<"create" | "update">("create");
 
 const { get, data: areas } = useGetAllAreas();
 
-const addArea = (): void => {
+const createArea = (): void => {
+  updatedArea.value = null;
   isAddAreaModalOpen.value = true;
-  updatedArea.value = undefined;
+  areaFormMode.value = "create";
 };
 
-const editArea = (area: Area): void => {
+const updateArea = (area: Area): void => {
   isAddAreaModalOpen.value = true;
   updatedArea.value = area;
+  areaFormMode.value = "update";
 };
 
 watch(isAddAreaModalOpen, (is: boolean): void => {
-  if (!is) updatedArea.value = undefined;
+  get();
+  if (!is) updatedArea.value = null;
 });
 
 onMounted(get);

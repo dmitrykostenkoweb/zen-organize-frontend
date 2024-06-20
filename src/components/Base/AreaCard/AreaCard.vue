@@ -13,7 +13,7 @@
     </template>
     <p v-if="description" class="area-description">{{ description }}</p>
     <template #actions>
-      <EditButton @click="emit('edit')" />
+      <EditButton @click="emit('update')" />
     </template>
   </Card>
 </template>
@@ -29,7 +29,7 @@ interface Props {
 }
 
 interface Emits {
-  (e: "edit"): void;
+  (e: "update"): void;
 }
 
 defineProps<Props>();
