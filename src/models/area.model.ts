@@ -1,5 +1,5 @@
 export interface Area {
-  areaId: number;
+  areaid: number;
   name: string;
   description?: string;
   imageUrl?: string;

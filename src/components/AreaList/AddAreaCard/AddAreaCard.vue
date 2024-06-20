@@ -4,7 +4,7 @@
     title="Add new Area"
     style="width: 300px"
     hoverable
-    @click="emit('add')"
+    @click="emit('create')"
   >
     <a-typography-text type="secondary"
       >Click the Add button to create a new Area</a-typography-text
@@ -21,7 +21,7 @@
           size="large"
           type="default"
           shape="circle"
-          @click="emit('add')"
+          @click="emit('create')"
           :icon="h(FileAddFilled)"
         />
       </a-tooltip>
@@ -35,7 +35,7 @@ import { Card } from "ant-design-vue";
 import { FileAddFilled } from "@ant-design/icons-vue";
 
 interface Emits {
-  (emit: "add"): void;
+  (emit: "create"): void;
 }
 
 const emit = defineEmits<Emits>();
